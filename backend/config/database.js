@@ -24,6 +24,13 @@ const sequelize = new Sequelize(
       acquire: 30000, //Tiempo máximo (en ms) que sequelize intentará obtener una conexión antes de lanzar un error
       idle: 10000, //Tiempo máximo (en ms) que una conexión puede estar inactiva antes de ser liberada
     },
+    //configuración de logging
+    //Permite ver las consultas mySQL por consola
+    logging: process.env.NODE_ENV === "development" ? console.log : false, //Habilita el logging solo en desarrollo
+
+
+    //zona horaria
+    timezone: "-05:00", //Zona horaria de colombia
   },
 );
 
