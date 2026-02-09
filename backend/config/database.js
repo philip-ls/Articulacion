@@ -31,6 +31,16 @@ const sequelize = new Sequelize(
 
     //zona horaria
     timezone: "-05:00", //Zona horaria de colombia
+
+    //opciones adicionales
+    define: {
+      //timestamps: true crea automaticamente los campos createdAt y updatedAt en las tablas.
+      timestamps: true, 
+      //underscored: true usa snake_case para los nombres de columnas en lugar de camelCase.
+      underscored: true, 
+      //freezeTableName: true usa el nombre del modelo tal cual para la tabla
+      freezeTableName: true, 
+    },
   },
 );
 
