@@ -43,5 +43,17 @@ const sequelize = new Sequelize(
     },
   },
 );
-
-module.exports = sequelize;
+/*Funcion para probar la conexión de la base de datos
+esta funcion se llamara al iniciar el servidor*/
+const testConnection = async () => {
+  try {
+    //intentar autenticar con la base de datos
+    await sequelize.authenticate();
+    console.log("Conexión a MySQL establecida correctamente.");
+    return true;
+  } catch (error) {
+    console.error("X Error al conectar con MySQL:", error.message);
+    console.error(" Verifica que XAMPP este corriendo y las credenciales en .env sean correctas.");
+    return false;
+  }
+};
