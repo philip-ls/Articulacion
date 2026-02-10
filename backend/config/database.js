@@ -87,4 +87,11 @@ const syncDataBase = async (force = false, alter = false) => {
     console.error("X Error al sincronizar la base de datos:", error.message);
     return false;
   }
-}
+};
+
+// Exportar la instancia de sequelize y las funciones
+module.exports = {
+    sequelize,
+    testConnection,
+    syncDatabase,
+};
