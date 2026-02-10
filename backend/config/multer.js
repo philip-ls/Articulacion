@@ -20,10 +20,10 @@ require("dotenv").config();
 // Obtener la ruta donde se guardan los archivos
 const uploadPath = process.env.UPLOAD_PATH || "./uploads";
 
-// Verificar si la carpeta uploads existe, si no, crearla 
+// Verificar si la carpeta uploads existe, si no, crearla
 if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true});
-  console.log('Carpeta ${uploadPath} creada');
+  fs.mkdirSync(uploadPath, { recursive: true });
+  console.log("Carpeta ${uploadPath} creada");
 }
 
 /**
@@ -34,21 +34,40 @@ if (!fs.existsSync(uploadPath)) {
 const storage = multer.diskStorage({
   /**
    * Destination: define la carpeta destino donde se guardara el archivo
-   * 
+   *
    * @param {object} req - Objeto de peticion HTTP
    * @param {object} file - Archivo que esta subiendo
    * @param {function} cb - Callback que se llama con (error, destination)
    */
+
   destination: function (req, file, cb) {
     // cb(null, ruta) -> sin error, ruta = carpeta destino
     cb(null, uploadPath);
   },
-  
+
   /**
-   *filename: define el nombre con el que se guardara el archivo
-   *formato: timestamp-nombreoriginal.ext
+   * filename: define el nombre con el que se guardara el archivo
+   * formato: timestamp-nombreoriginal.ext
    *
    * @param {object} req - Objeto de peticion HTTP
    * @param {object} file - Archivo que esta subiendo
+   * @param {function} cb - Callback que se llama con (error, filename)
    */
-})
+
+  filename: function (req, file, cb) {
+    // Generar un nombre unico usandi timestamp + nombre original
+    // Date.now() genera un timestamp unico
+    // path.extname() extrae la extension del archivo (.jpg, .png, etc)
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
+/**
+ * filtro para validar el tipo de archivo
+ * solo permite imagenes (jpg, jpeg, png, gif)
+ *
+ * @param {object} req - Objeto de peticion HTTP
+ * @param {object} file - Archivo que esta subiendo
+ * @param {function} cb - Callback que se llama con (error, acceptFile)
+ */
