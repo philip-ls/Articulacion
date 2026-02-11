@@ -60,7 +60,7 @@ const categoria = sequelize.define('Categoria', {
     }
 
 }, {
-    // Opciones del modelo
+// Opciones del modelo
 
     tableName: 'categorias',
     timestamps: true, // Agrega campos de createdAt y updatedAt
@@ -82,8 +82,66 @@ const categoria = sequelize.define('Categoria', {
                 // Importar modelos (aqui para evitar dependencias circulares)
                 const Subcategoria = require('./Subcategoria');
                 const Producto = require('./Producto');
+
+                try {
+                    // Paso 1 desactivar las subcategorias de esta categoria
+                    const subcategorias = await Subcategoria.findAll({
+                        where: {categoriaId: categoria.id}
+                    });
+
+                    for (const subcategoria of subcategorias) {
+                        await subcategoria.update({ activo: false }, { transaction: options.transaction });
+                        console.log(' Subcategoria desactivada: {subcategoria.nombre}');
+                    }
+
+                    // Paso 2 desactivar los productos de esta categoria
+                    const productos = await Producto.findAll({
+                        where: {categoriaId: categoria.id}
+                    });
+
+                    for (const producto of productos) {
+                        await producto.update({ activo: false }, { transaction: options.transaction });
+                        console.log(' Subcategoria desactivada: {subcategoria.nombre}');
+                    }
+
+                console.log('categoria y elementos relacionados desactivados correctamente');
+            } catch (error) {
+                console.error('Error al desactivar elementos relacionados: ', error);
+                throw error;
             }
         }
+     } // si se activa una categoria no se activan automaticamente las subcategorias y productos
     }
 });
 
+// METODOS DE INSTANCIA
+/**
+ * Metodo para contar subcategorias de esta categoria
+ * 
+ * @return {Promise<number>} numero de subcategorias
+ */
+categoria.prototype.contarSubcategorias = async function() {
+    const Subcategoria = require('./subcategoria');
+    return await Subcategoria.count({ where: {categoriaId: this.id}});
+};
+
+/**
+ * Metodo para contar productos de esta categoria
+ */
+categoria.prototype.contarSubcategorias = async function() {
+    const subcategoria = require('./subcategoria');
+    return await subcategoria.count({ where: {categoriaId: this.id}});
+};
+
+/**
+ * Metodo para contar subcategorias de esta categoria
+ * 
+ * @return {Promise<number>} numero de subcategorias
+ */
+categoria.prototype.contarProductos = async function() {
+    const Subcategoria = require('./subcategoria');
+    return await Producto.count({ where: {categoriaId: this.id}});
+};
+
+// Exportar modelo categoria
+module.exports = categoria;
