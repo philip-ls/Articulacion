@@ -178,15 +178,5 @@ categoria.prototype.contarSubcategorias = async function() {
     return await subcategoria.count({ where: {categoriaId: this.id}});
 };
 
-/**
- * Metodo para contar subcategorias de esta categoria
- * 
- * @return {Promise<number>} numero de subcategorias
- */
-categoria.prototype.contarProductos = async function() {
-    const Subcategoria = require('./subcategoria');
-    return await Producto.count({ where: {categoriaId: this.id}});
-};
-
 // Exportar modelo categoria
 module.exports = categoria;
