@@ -178,5 +178,16 @@ categoria.prototype.contarSubcategorias = async function() {
     return await subcategoria.count({ where: {categoriaId: this.id}});
 };
 
-// Exportar modelo categoria
-module.exports = categoria;
+/**
+ * Metodo para obtener la categoria padre
+ *
+ * @returns {Promise<Categoria>} - categoria padre
+ */
+subcategoria.prototype.obtenerCategoria = async function() {
+    const categoria = require('./Categoria');
+    return await categoria.findByPk(this.categoriaId);
+};
+
+
+// Exportar modelo subcategoria
+module.exports = Subcategoria;
