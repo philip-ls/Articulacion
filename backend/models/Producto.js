@@ -1,67 +1,69 @@
 /**
  * MODELO PRODUCTO
- * 
- *Define la tabla Categoria en la base de datos 
+ *
+ *Define la tabla Categoria en la base de datos
  *Almacena la tabla productos en la base de datos
  *Almacena los productos
  */
 
- //Importar DataTypes de sequelize
- const { DataTypes} = require('sequelize');
+//Importar DataTypes de sequelize
+const { DataTypes } = require("sequelize");
 
- //Importar instancia de sequelize
- const { sequelize } = require('../config/database');
-const { before } = require('node:test');
-const Categoria = require('./Categoria');
+//Importar instancia de sequelize
+const { sequelize } = require("../config/database");
+const { before } = require("node:test");
+const Categoria = require("./Categoria");
 
 /**
-* Definir el modelo de Producto
-*/
- const Producto = sequelize.define('Producto', {
+ * Definir el modelo de Producto
+ */
+const Producto = sequelize.define(
+  "Producto",
+  {
     //Campos de la tabla
     //Id Identificador unico (PRIMARY KEY)
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
 
     nombre: {
-        type: DataTypes.STRING(200),
-        allowNull: false,
-        validate: {
-            notEmpty: {
-                msg: 'El nombre del producto no puede estar vacio'
-            },
-            len: {
-                args: [3, 200],
-                msg: 'El nombre debe tener entre 3 y 200'
-            }
-        }
+      type: DataTypes.STRING(200),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El nombre del producto no puede estar vacio",
+        },
+        len: {
+          args: [3, 200],
+          msg: "El nombre debe tener entre 3 y 200",
+        },
+      },
     },
 
     /**
      * Descripcion detallada del producto
      */
     descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: true,
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
-    
+
     //Precio del producto
     precio: {
-        type: DataTypes.DECIMAL(10, 2), //hasta 99,999,999.99
-        allowNull: false,
-        validate: {
-            isDecimal: {
-                msg: 'El precio debe ser un numero decimal valido'
-            },
-            min: {
-                args: [0],
-                msg: 'El precio no puede ser negativo'
-            }
-        }
+      type: DataTypes.DECIMAL(10, 2), //hasta 99,999,999.99
+      allowNull: false,
+      validate: {
+        isDecimal: {
+          msg: "El precio debe ser un numero decimal valido",
+        },
+        min: {
+          args: [0],
+          msg: "El precio no puede ser negativo",
+        },
+      },
     },
 
     // Stock del producto cantidad disponible en inventario
@@ -86,18 +88,18 @@ const Categoria = require('./Categoria');
      * La ruta seria uploads/coca-cola-producto.jpg
      */
 
-  imagen: {
-    type: DataTypes.STRING(255),
-    allowNull: true, // la imagen puede ser opcional
-    validate: {
-      is: {
-        args: /^[\w,\s-]+\.(jpg|jpeg|png|gif)$/i, // Validar formato de imagen
-        msg: 'La imagen debe ser un archivo jpg, jpeg, png o gif'
-      }
-    }
-  },
+    imagen: {
+      type: DataTypes.STRING(255),
+      allowNull: true, // la imagen puede ser opcional
+      validate: {
+        is: {
+          args: /^[\w,\s-]+\.(jpg|jpeg|png|gif)$/i, // Validar formato de imagen
+          msg: "La imagen debe ser un archivo jpg, jpeg, png o gif",
+        },
+      },
+    },
 
-      /**
+    /**
      * subcategoriaId - ID de la subcategoria a la que pertenece (FOREIGN KEY)
      * Esta es la relacion con la tabla subcategoria
      */
@@ -116,7 +118,6 @@ const Categoria = require('./Categoria');
         },
       },
     },
-
 
     /**
      * categoriaId - ID de la categoria a la que pertenece (FOREIGN KEY)
@@ -159,15 +160,20 @@ const Categoria = require('./Categoria');
      */
     indexes: [
       {
+        //Indice para buscar productos por subcategoria
+        fields: ["subcategoriaId"],
+      },
+      {
         //Indice para buscar productos por categoria
         fields: ["categoriaId"],
       },
       {
-        //Indice compuesto: nombre unico por categoria
-        //Permite que dos categorias diferentes tengan productos con el mismo nombre
-        unique: true,
-        fields: ["nombre", "categoriaId"],
-        name: "nombre_categoria_unique",
+        //Indice para buscar productos activos
+        fields: ["activo"],
+      },
+      {
+        //Indice para buscar producto por nombre
+        fields: ["nombre"],
       },
     ],
 
