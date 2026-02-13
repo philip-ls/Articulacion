@@ -1,7 +1,7 @@
 /**
- * MODELO SUBCATEGORIA
- * Define la tabla Subcategoria en la base de datos
- * Almacena las subcategorias de las categorias principales
+ * MODELO PRODUCTO
+ * Define la tabla Producto en la base de datos
+ * Almacena los productos
  */
 
 //Importar DataTypes de sequelize
@@ -11,9 +11,9 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 /**
- * Definir el modelo de subcategoria
+ * Definir el modelo de producto
  */
-const subcategoria = sequelize.define('Subcategoria', {
+const producto = sequelize.define('Producto', {
     
 // Campos de la tabla
 // Id Identificador unico  (PRIMARY KEY)
@@ -25,14 +25,24 @@ const subcategoria = sequelize.define('Subcategoria', {
     },
 
     nombre: {
-        type:DataTypes.STRING(100),
+        type:DataTypes.STRING(200),
         allowNull: false,
+        validate:{
+            notEmpty: {
+                msg: 'El nombre del producto no puede estar vacio'
+            },
+            len: {
+                args: [3, 200],
+                msg: 'El nombre debe tener entre 3 y 200 caracteres'
+            }
+      
+            },
         unique: {
-            msg: 'ya existe una subcategoria con ese nombre'
+            msg: 'ya existe un producto con ese nombre'
         },
         validate:{
             notEmpty: {
-                msg: 'El nombre de la subcategoria no puede estar vacio'
+                msg: 'El nombre del producto no puede estar vacio'
             },
             len: {
                 args: [2, 100],
@@ -42,11 +52,27 @@ const subcategoria = sequelize.define('Subcategoria', {
     },
 
 /**
-* Descripcion de la subcategoria
+* Descripcion detallada del producto
 */
     descripcion: {
         type: DataTypes.TEXT,
         allowNull: true,
+    },
+
+
+  // Precio del producto
+    precio: {
+        type: DataTypes.DECIMAL(10, 2), // hasta 99,999,999.99
+        allowNull: false,
+        validate: {
+            isDecimal: {
+                msg: 'El precio debe ser un numero decimal'
+            },
+            min: {
+                args: [0],
+                msg: 'El precio no puede ser negativo'
+            }
+        }
     },
 
 /**
@@ -58,7 +84,7 @@ const subcategoria = sequelize.define('Subcategoria', {
         allowNull: false,
         references: {
             model: 'categorias', // nombre de la tabla categoria
-            key: 'id' // campo de laa tabla relacionada
+            key: 'id' // campo de la tabla relacionada
         },
         onUpdate: 'CASCADE', // Si se actualiza el ID, se actualizar aca tambien
         onDelete: 'CASCADE', // Si se elimina la categoria eliminar las subcategorias relacionadas
@@ -82,7 +108,7 @@ const subcategoria = sequelize.define('Subcategoria', {
 }, {
 // Opciones del modelo
 
-    tableName: 'subcategorias',
+    tableName: 'productos',
     timestamps: true, // Agrega campos de createdAt y updatedAt
 
 /**
@@ -90,12 +116,12 @@ const subcategoria = sequelize.define('Subcategoria', {
  */
     indexes: [
         {
-            //Indice para buscar subcategorias por categoria
+            //Indice para buscar productos por categoria
             fields:['categoriaId']
         },
         {
             //Indice compuesto: nombre unico por categoria
-            //Permite que dos categorias diferentes tengan subcategorias con el mismo nombre
+            //Permite que dos categorias diferentes tengan productos con el mismo nombre
             unique: true,
             fields: ['nombre', 'categoriaId'],
             name: 'nombre_categoria_unique'
@@ -174,11 +200,11 @@ Subcategoria.prototype.contarProductos = async function() {
  * Metodo para contar productos de esta categoria
  */
 categoria.prototype.contarSubcategorias = async function() {
-    const subcategoria = require('./Subcategoria');
+    const subcategoria = require('./Producto');
     return await subcategoria.count({ where: {categoriaId: this.id}});
 };
 
-/**             
+/**
  * Metodo para obtener la categoria padre
  *
  * @returns {Promise<Categoria>} - categoria padre
