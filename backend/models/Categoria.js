@@ -121,7 +121,7 @@ const categoria = sequelize.define('Categoria', {
  * @return {Promise<number>} numero de subcategorias
  */
 categoria.prototype.contarSubcategorias = async function() {
-    const Subcategoria = require('./subcategoria');
+    const Subcategoria = require('./Subcategoria');
     return await Subcategoria.count({ where: {categoriaId: this.id}});
 };
 
@@ -129,7 +129,7 @@ categoria.prototype.contarSubcategorias = async function() {
  * Metodo para contar productos de esta categoria
  */
 categoria.prototype.contarSubcategorias = async function() {
-    const subcategoria = require('./subcategoria');
+    const subcategoria = require('./Subcategoria');
     return await subcategoria.count({ where: {categoriaId: this.id}});
 };
 
@@ -139,7 +139,7 @@ categoria.prototype.contarSubcategorias = async function() {
  * @return {Promise<number>} numero de subcategorias
  */
 categoria.prototype.contarProductos = async function() {
-    const Subcategoria = require('./subcategoria');
+    const Subcategoria = require('./Subcategoria');
     return await Producto.count({ where: {categoriaId: this.id}});
 };
 
